@@ -1,22 +1,16 @@
 let content = document.querySelector("pre").textContent.trim().split("\n\n");
-let groups = content.map((item) => {
+let commmonQuestionsPerGroups = content.map((item) => {
   const persons = item.split("\n");
-  let questions = persons.reduce((acc, curr) => {
-    let person = curr;
-    person.split("").forEach((question) => (acc[question] = 1));
+  let questionsAnsweredByGroup = persons.reduce((acc, person) => {
+    person.split("").forEach((question) => {
+      if (!acc[question])
+        acc[question] = 0
+      acc[question]++;
+    });
     return acc;
   }, {});
-  return questions;
-});
-let sameQuestionForGroups = groups.map((groupQuestions, index) => {
-  return Object.keys(groupQuestions).reduce((acc, curr) => {
-    let currentGroup = content[index]
-    let persons = currentGroup.split('\n')
-    if (persons.every(person => person.indexOf(curr) !== -1))
-      acc[curr] = 1
-    return acc
-  }, {})
+  let commmonQuestions = Object.keys(questionsAnsweredByGroup).filter(key => questionsAnsweredByGroup[key] === persons.length)
+  return commmonQuestions.map(question => question.length)
 })
-let questionsPerGroup = sameQuestionForGroups.map((group) => Object.keys(group).length);
-let total = questionsPerGroup.reduce((acc, curr) => acc + curr, 0);
+let total = commmonQuestionsPerGroups.reduce((acc, curr) => acc + curr, 0);
 console.log(total)
